@@ -22,6 +22,9 @@ app.component('app-header', {
           <li class="nav-item active">
             <router-link class="nav-link" to="/">Home <span class="sr-only">(current)</span></router-link>
           </li>
+          <li class="nav-item active">
+          <router-link class="nav-link" to="/uploads">Uploads <span class="sr-only">(current)</span></router-link>
+        </li>
         </ul>
       </div>
     </nav>
@@ -57,6 +60,48 @@ const Home = {
     }
 };
 
+const UploadForm = {
+    name: 'Upload-Form',    
+    template: 
+    `<form class="form-group" id="uploadForm" @submit.prevent="uploadPhoto" method="post">
+        <div class="formfields">
+            <label for="description">Description</label><br>
+            <textarea class="form-control" id="description" name="description" required=""></textarea><br>
+        </div>
+        <div>
+            <label for="image">Image</label><br>
+            <input class="form-control-file" id="image" name="image" required="" type="file">
+        </div><br>
+        <span></span><br>
+        <button type="submit" name="submit" class="buttons btn btn-success">Submit</button>
+    </form>
+    `,
+    methods:{
+       uploadPhoto(){
+        let uploadForm = document.getElementById('uploadForm');
+        let form_data = new FormData(uploadForm);
+        fetch("/api/upload", {
+            method: 'POST',
+            body: form_data,
+            headers: {'X-CSRFToken': token    },    credentials: 'same-origin'
+        })    
+            .then(function (response) {        
+                return response.json();
+                })    
+            .then(function (jsonResponse) {
+                // display a success message
+                console.log(jsonResponse);    })    
+            .catch(function (error) {
+                console.log(error);    
+            });
+       }
+    }
+
+}
+    
+
+
+
 const NotFound = {
     name: 'NotFound',
     template: `
@@ -73,6 +118,7 @@ const NotFound = {
 const routes = [
     { path: "/", component: Home },
     // Put other routes here
+    {path:"/uploads",component: UploadForm},
 
     // This is a catch all route in case none of the above matches
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound }
