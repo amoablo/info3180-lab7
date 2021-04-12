@@ -63,7 +63,20 @@ const Home = {
 const UploadForm = {
     name: 'Upload-Form',    
     template: 
-    `<form class="form-group" id="uploadForm" @submit.prevent="uploadPhoto" method="post">
+
+    `
+    <div class="alert alert-success" role="alert" v-if="message">
+
+        {{message}}
+
+     </div>
+
+    <div class="alert alert-danger" role="alert" v-if="error">
+
+     {{error}}
+
+  </div>
+    <form class="form-group" id="uploadForm" @submit.prevent="uploadPhoto" method="post">
         <div class="formfields">
             <label for="description">Description</label><br>
             <textarea class="form-control" id="description" name="description" required=""></textarea><br>
@@ -80,6 +93,7 @@ const UploadForm = {
        uploadPhoto(){
         let uploadForm = document.getElementById('uploadForm');
         let form_data = new FormData(uploadForm);
+        let self = this;
         fetch("/api/upload", {
             method: 'POST',
             body: form_data,
@@ -90,11 +104,20 @@ const UploadForm = {
                 })    
             .then(function (jsonResponse) {
                 // display a success message
-                console.log(jsonResponse);    })    
+                console.log(jsonResponse);
+                self.message=jsonResponse.message;
+             })    
             .catch(function (error) {
-                console.log(error);    
+                console.log(error); 
+                self.error=error.message;   
             });
        }
+    },
+    data: function(){
+        return {
+            message: "",
+            error: "",
+        }
     }
 
 }

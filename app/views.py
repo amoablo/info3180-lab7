@@ -5,6 +5,7 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 import os
+from flask.json import jsonify
 from app import app
 from flask import render_template, request
 from .forms import UploadForm
@@ -46,12 +47,12 @@ def upload():
             "filename": filename,
             "description": description
             }
-        return success
+        return jsonify(success)
     else:
         error = {
             "errors": form_errors(uploadform)
         }
-        return error
+        return jsonify(error)
 
 
 
